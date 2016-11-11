@@ -14,8 +14,10 @@ function callAPI(token, debug) {
   var t0 = performance.now();
 
   var myHeaders = new Headers();
+  if (debug) {
+    myHeaders.append('Ocp-Apim-Trace', 'true');
+  }
   myHeaders.append('Ocp-Apim-Subscription-Key', '785ed7b1396a479d90500938e926eb88');
-  myHeaders.append('Ocp-Apim-Trace', true);
   myHeaders.append('Authorization', "Bearer " + token);
 
   var options = {
