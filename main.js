@@ -16,26 +16,29 @@ function callAPI(token, debug) {
       mode: 'cors',
       headers: {
         "Ocp-Apim-Subscription-Key": "785ed7b1396a479d90500938e926eb88",
-        "Ocp-Apim-Trace": debug,
+        "Ocp-Apim-Trace": debug ? "true": "false",
         "Authorization": "Bearer " + token }
   })
-    .then(function(response) { 
+  .then(function(response) { 
+      return (response, response.text());  
+  })  
+  .then(function(response, text) {
       var t1 = performance.now();
       text = response.text();
       text += "</br>"
       text += "Call took " + (t1 - t0) + " milliseconds.";
 
       if (response.headers.has("Ocp-Apim-Trace-Location")) {
-        text += "</br>"
-        text += response.headers.get('Ocp-Apim-Trace-Location')
+        text += "</br>";
+        text += response.headers.get('Ocp-Apim-Trace-Location');
       }
 
       document.getElementById("result").innerHTML = text;
-    })    
-    .catch(function(error) {  
-      console.log('Request failed', error) 
+  })
+  .catch(function(error) {  
+      console.log('Request failed', error);
       document.getElementById("result").innerHTML = error; 
-    });
+  });
 }
 
 var ehelseLabAuthUri = 'http://access.ehelselab.com/authorize';
