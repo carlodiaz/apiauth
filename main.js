@@ -1,26 +1,37 @@
-function checkForTokenAndCallAPI() {
+function test(debug) {
   if (window.location.hash && window.location.hash.indexOf('access_token') > 0) {
      var hash = window.location.hash;
      var token = hash.substring(hash.indexOf('access_token=') + 'access_token='.length, hash.indexOf('&'));
      console.log('Token:', token);
-     callAPI(token);
-  }    
+     callAPI(token, debug);
+  }  
+  else {
+    document.getElementById("result").innerHTML = "No Access Token"; 
+  }  
 }
 
-function callAPI(token) {
+function callAPI(token, debug) {
+  var t0 = performance.now();
   fetch('https://api4poc.azure-api.net/AuthAPI/api/Values', {
       mode: 'cors',
       headers: {
         "Ocp-Apim-Subscription-Key": "785ed7b1396a479d90500938e926eb88",
+        "Ocp-Apim-Trace": debug,
         "Authorization": "Bearer " + token }
   })
-    .then(function(response) {  
-      return response.text();  
-    })  
-    .then(function(text) {  
-      console.log('Request successful', text);
-      document.getElementById("result").innerHTML = text; 
-    })  
+    .then(function(response) { 
+      var t1 = performance.now();
+      text = response.text();
+      text += "</br>"
+      text += "Call took " + (t1 - t0) + " milliseconds.";
+
+      if (response.headers.has("Ocp-Apim-Trace-Location")) {
+        text += "</br>"
+        text += response.headers.get('Ocp-Apim-Trace-Location')
+      }
+
+      document.getElementById("result").innerHTML = text;
+    })    
     .catch(function(error) {  
       console.log('Request failed', error) 
       document.getElementById("result").innerHTML = error; 
@@ -38,7 +49,7 @@ var ehelseLabParams = {
   state: '3(#0/!~',
 };
 
-function test() {
+function auth() {
   var authorization_uri = ehelseLabAuthUri + '?' + 
     'client_id=' + ehelseLabParams.client_id +
     '&redirect_uri=' + ehelseLabParams.redirect_uri +
@@ -51,5 +62,3 @@ function test() {
   console.log(authorization_uri);
   window.location = authorization_uri;
 }
-
-checkForTokenAndCallAPI()
