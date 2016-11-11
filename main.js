@@ -12,23 +12,23 @@ function test(debug) {
 
 function callAPI(token, debug) {
   var t0 = performance.now();
+
+  var myHeaders = new Headers();
+  myHeaders.append('Ocp-Apim-Subscription-Key', '785ed7b1396a479d90500938e926eb88');
+  myHeaders.append('Ocp-Apim-Trace', 'true');
+  myHeaders.append('Authorization', "Bearer " + token);
+
   var options = {
       mode: 'cors',
-      headers: {
-        "Ocp-Apim-Subscription-Key": "785ed7b1396a479d90500938e926eb88",
-        "Ocp-Apim-Trace": debug ? "true": "false",
-        "Authorization": "Bearer " + token }
+      headers: myHeaders
   };
 
   fetch('https://api4poc.azure-api.net/AuthAPI/api/Values', options)
   .then(function(response) { 
       var t1 = performance.now();
       var result = "Call took " + (t1 - t0) + " milliseconds.";
-
-      if (response.headers.has("Ocp-Apim-Trace-Location")) {
-        result += "</br>";
-        result += response.headers.get('Ocp-Apim-Trace-Location');
-      }
+      result += "</br>";
+      result += response.headers.get('Ocp-Apim-Trace-Location');
 
       document.getElementById("result").innerHTML = result;
       return response.text();  
