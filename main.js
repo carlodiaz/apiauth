@@ -20,19 +20,21 @@ function callAPI(token, debug) {
         "Authorization": "Bearer " + token }
   })
   .then(function(response) { 
-      return (response, response.text());  
-  })  
-  .then(function(response, text) {
       var t1 = performance.now();
-      var result = text;
-      result += "</br>"
-      result += "Call took " + (t1 - t0) + " milliseconds.";
+      var result = "Call took " + (t1 - t0) + " milliseconds.";
 
       if (response.headers.has("Ocp-Apim-Trace-Location")) {
         result += "</br>";
         result += response.headers.get('Ocp-Apim-Trace-Location');
       }
 
+      document.getElementById("result").innerHTML = result;
+      return response.text();  
+  })  
+  .then(function(text) {
+      var result = document.getElementById("result").innerHTML;
+      result += "</br>"
+      result += text;
       document.getElementById("result").innerHTML = result;
   })
   .catch(function(error) {  
