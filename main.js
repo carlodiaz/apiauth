@@ -24,16 +24,16 @@ function callAPI(token, debug) {
   })  
   .then(function(response, text) {
       var t1 = performance.now();
-      text = response.text();
-      text += "</br>"
-      text += "Call took " + (t1 - t0) + " milliseconds.";
+      var result = text;
+      result += "</br>"
+      result += "Call took " + (t1 - t0) + " milliseconds.";
 
       if (response.headers.has("Ocp-Apim-Trace-Location")) {
-        text += "</br>";
-        text += response.headers.get('Ocp-Apim-Trace-Location');
+        result += "</br>";
+        result += response.headers.get('Ocp-Apim-Trace-Location');
       }
 
-      document.getElementById("result").innerHTML = text;
+      document.getElementById("result").innerHTML = result;
   })
   .catch(function(error) {  
       console.log('Request failed', error);
